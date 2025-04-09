@@ -17,19 +17,16 @@ class SHLRecommender:
         ).tolist()
         self.model = SentenceTransformer('all-MiniLM-L6-v2')
 
-    def build_index(self):
-        self.embeddings = self.model.encode(self.texts, show_progress_bar=False)
-        self.index = faiss.IndexFlatL2(self.embeddings.shape[1])
-        self.index.add(self.embeddings)
-
     def query(self, user_query, top_k=5):
-        self.build_index()
+        embeddings = self.model.encode(self.texts, show_progress_bar=False)
+        index = faiss.IndexFlatL2(embeddings.shape[1])
+        index.add(embeddings)
+
         query_embedding = self.model.encode([user_query])
-        _, indices = self.index.search(query_embedding, top_k)
+        _, indices = index.search(query_embedding, top_k)
         results = self.df.iloc[indices[0]].to_dict(orient="records")
         return results
 
-# Load model and CSV
 recommender = SHLRecommender("shl_catalog_detailed.csv")
 
 @app.route("/health", methods=["GET"])
@@ -40,7 +37,8 @@ def health():
 def recommend():
     data = request.get_json()
     if not data or "query" not in data:
-        return jsonify({"error": "Missing 'query' field"}), 400
+        return jsonify({"error": "Missing 'query'"}), 400
 
     results = recommender.query(data["query"])
     return jsonify(results)
+
