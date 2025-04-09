@@ -1,0 +1,4 @@
+flask
+faiss-cpu
+pandas
+sentence-transformers
