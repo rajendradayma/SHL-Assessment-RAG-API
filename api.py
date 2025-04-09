@@ -12,7 +12,7 @@ with open("embeddings.pkl", "rb") as f:
 df = data["df"]
 embeddings = data["embeddings"]
 index = faiss.read_index("faiss.index")
-model = SentenceTransformer("all-MiniLM-L6-v2")  # Only used for 1 query
+model = SentenceTransformer("paraphrase-MiniLM-L3-v2")  # Only used for 1 query
 
 
 @app.route("/recommend", methods=["POST"])
