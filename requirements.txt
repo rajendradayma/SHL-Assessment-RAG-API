@@ -2,3 +2,4 @@ flask
 faiss-cpu
 pandas
 sentence-transformers
+huggingface_hub[hf_xet]
